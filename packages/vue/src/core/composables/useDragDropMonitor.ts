@@ -1,6 +1,6 @@
-import {useEffect} from 'react';
 import type {DragDropEvents, Data} from '@dnd-kit/abstract';
 import type {Draggable, Droppable, DragDropManager} from '@dnd-kit/dom';
+import {onWatcherCleanup, watchEffect} from 'vue';
 
 import {useDragDropManager} from './useDragDropManager.ts';
 import {CleanupFunction} from '@dnd-kit/state';
@@ -31,7 +31,7 @@ export type EventHandlers<T extends Data = Data> = {
 };
 
 /**
- * Hook to monitor drag and drop events anywhere within a DragDropProvider
+ * Composable to monitor drag and drop events anywhere within a DragDropProvider
  * @param handlers Object containing event handlers for drag and drop events
  */
 export function useDragDropMonitor<T extends Data = Data>(
@@ -39,11 +39,11 @@ export function useDragDropMonitor<T extends Data = Data>(
 ): void {
   const manager = useDragDropManager();
 
-  useEffect(() => {
+  watchEffect(() => {
     if (!manager) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn(
-          'useDndMonitor hook was called outside of a DragDropProvider. ' +
+          'useDragDropMonitor composable was called outside of a DragDropProvider. ' +
             'Make sure your app is wrapped in a DragDropProvider component.'
         );
       }
@@ -58,7 +58,7 @@ export function useDragDropMonitor<T extends Data = Data>(
             .replace(/^on/, '')
             .toLowerCase() as keyof Events<T>;
 
-          const unsubscribe = manager.monitor.addEventListener(
+          const unsubscribe = manager.value.monitor.addEventListener(
             eventName,
             handler
           );
@@ -71,6 +71,6 @@ export function useDragDropMonitor<T extends Data = Data>(
       []
     );
 
-    return () => cleanupFns.forEach((cleanup) => cleanup?.());
-  }, [manager, handlers]);
+    onWatcherCleanup(() => cleanupFns.forEach((cleanup) => cleanup()));
+  });
 }
