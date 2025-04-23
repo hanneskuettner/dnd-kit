@@ -13,7 +13,7 @@ import {
 import type {MaybeRefsOrGetters, MaybeElement} from '../../types.ts';
 import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
 import {useDeepSignal} from '@dnd-kit/vue/composables';
-import {useDragDropManager} from '@dnd-kit/vue';
+import {useDragDropManager} from '../composables/useDragDropManager.ts';
 
 export interface UseDroppableInput<T extends Data = Data>
   extends MaybeRefsOrGetters<Omit<DroppableInput<T>, 'element'>> {
