@@ -20,4 +20,6 @@ export {
 
 export {useDragOperation} from './composables/useDragOperation.ts';
 
+export {useInstance} from './composables/useInstance.ts';
+
 export {KeyboardSensor, PointerSensor} from '@dnd-kit/dom';
