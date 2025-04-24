@@ -1,19 +1,12 @@
 import type {Data} from '@dnd-kit/abstract';
 import type {DraggableInput} from '@dnd-kit/dom';
 import {Draggable} from '@dnd-kit/dom';
-import type {MaybeRefOrGetter} from 'vue';
-import {
-  computed,
-  shallowReadonly,
-  shallowRef,
-  toValue,
-  watch,
-  watchEffect,
-} from 'vue';
-import type {MaybeRefsOrGetters, MaybeElement} from '../../types.ts';
-import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
 import {useDeepSignal} from '@dnd-kit/vue/composables';
-import {useDragDropManager} from '../composables/useDragDropManager.ts';
+import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
+import type {MaybeRefOrGetter} from 'vue';
+import {computed, shallowReadonly, toValue, watchEffect} from 'vue';
+import type {MaybeElement, MaybeRefsOrGetters} from '../../types.ts';
+import {useInstance} from '../composables/useInstance.js';
 
 export interface UseDraggableInput<T extends Data = Data>
   extends MaybeRefsOrGetters<
@@ -26,14 +19,19 @@ export interface UseDraggableInput<T extends Data = Data>
 export function useDraggable<T extends Data = Data>(
   input: UseDraggableInput<T>
 ) {
-  const manager = useDragDropManager();
-
-  const draggable = shallowRef(createDraggable());
+  const draggable = useInstance(
+    (manager) =>
+      new Draggable(
+        {
+          ...toValueDeep(input),
+          register: false,
+          element: unrefElement(input.element) ?? undefined,
+          handle: unrefElement(input.handle) ?? undefined,
+        },
+        manager
+      )
+  );
   const trackedDraggable = useDeepSignal(draggable);
-
-  watch(manager, () => {
-    draggable.value = createDraggable();
-  });
 
   watchEffect(() => {
     draggable.value.element = unrefElement(input.element) ?? undefined;
@@ -57,15 +55,4 @@ export function useDraggable<T extends Data = Data>(
     isDropping: computed(() => trackedDraggable.value.isDropping),
     isDragSource: computed(() => trackedDraggable.value.isDragSource),
   };
-
-  function createDraggable() {
-    return new Draggable(
-      {
-        ...toValueDeep(input),
-        element: unrefElement(input.element) ?? undefined,
-        handle: unrefElement(input.handle) ?? undefined,
-      },
-      manager.value
-    );
-  }
 }

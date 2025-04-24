@@ -2,14 +2,13 @@ import {type Data} from '@dnd-kit/abstract';
 import type {SortableInput} from '@dnd-kit/dom/sortable';
 import {defaultSortableTransition, Sortable} from '@dnd-kit/dom/sortable';
 import {batch} from '@dnd-kit/state';
-import {useDragDropManager} from '@dnd-kit/vue';
+import {useInstance} from '@dnd-kit/vue';
 import {useDeepSignal} from '@dnd-kit/vue/composables';
 import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
-import {MaybeRefOrGetter, triggerRef} from 'vue';
 import {
   computed,
+  MaybeRefOrGetter,
   shallowReadonly,
-  shallowRef,
   toValue,
   watch,
   watchEffect,
@@ -27,14 +26,27 @@ export interface UseSortableInput<T extends Data = Data>
 }
 
 export function useSortable<T extends Data = Data>(input: UseSortableInput<T>) {
-  const manager = useDragDropManager();
+  const transition = computed(() => ({
+    ...defaultSortableTransition,
+    ...toValue(input.transition),
+  }));
 
-  const sortable = shallowRef(createSortable());
-  const trackedSortable = useDeepSignal(sortable);
+  const sortable = useInstance((manager) => {
+    const _input = toValueDeep(input);
 
-  watch(manager, () => {
-    sortable.value = createSortable();
+    return new Sortable(
+      {
+        ..._input,
+        register: false,
+        transition: transition.value,
+        element: unrefElement(input.element),
+        handle: unrefElement(input.handle),
+        target: unrefElement(input.target),
+      },
+      manager
+    );
   });
+  const trackedSortable = useDeepSignal(sortable);
 
   watchEffect(() => {
     sortable.value.element = unrefElement(input.element);
@@ -56,10 +68,7 @@ export function useSortable<T extends Data = Data>(input: UseSortableInput<T>) {
     sortable.value.accept = toValue(input.accept);
     sortable.value.type = toValue(input.type);
     sortable.value.collisionPriority = toValue(input.collisionPriority);
-    sortable.value.transition = {
-      ...defaultSortableTransition,
-      ...toValue(input.transition),
-    };
+    sortable.value.transition = transition.value;
 
     if (toValue(input.data)) {
       sortable.value.data = toValue(input.data)!;
@@ -101,19 +110,4 @@ export function useSortable<T extends Data = Data>(input: UseSortableInput<T>) {
     isDragSource: computed(() => trackedSortable.value.isDragSource),
     isDropTarget: computed(() => trackedSortable.value.isDropTarget),
   };
-
-  function createSortable() {
-    const _input = toValueDeep(input);
-
-    return new Sortable(
-      {
-        ..._input,
-        transition: {...defaultSortableTransition, ..._input.transition},
-        element: unrefElement(input.element),
-        handle: unrefElement(input.handle),
-        target: unrefElement(input.target),
-      },
-      manager.value
-    );
-  }
 }

@@ -1,19 +1,17 @@
 import type {Data} from '@dnd-kit/abstract';
 import type {DroppableInput} from '@dnd-kit/dom';
 import {Droppable} from '@dnd-kit/dom';
+import {useDeepSignal} from '@dnd-kit/vue/composables';
+import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
 import {
   computed,
   MaybeRefOrGetter,
   shallowReadonly,
-  shallowRef,
   toValue,
-  watch,
   watchEffect,
 } from 'vue';
-import type {MaybeRefsOrGetters, MaybeElement} from '../../types.ts';
-import {toValueDeep, unrefElement} from '@dnd-kit/vue/utilities';
-import {useDeepSignal} from '@dnd-kit/vue/composables';
-import {useDragDropManager} from '../composables/useDragDropManager.ts';
+import type {MaybeElement, MaybeRefsOrGetters} from '../../types.ts';
+import {useInstance} from '../composables/useInstance.js';
 
 export interface UseDroppableInput<T extends Data = Data>
   extends MaybeRefsOrGetters<Omit<DroppableInput<T>, 'element'>> {
@@ -23,14 +21,18 @@ export interface UseDroppableInput<T extends Data = Data>
 export function useDroppable<T extends Data = Data>(
   input: UseDroppableInput<T>
 ) {
-  const manager = useDragDropManager();
-
-  const droppable = shallowRef(createDroppable());
+  const droppable = useInstance(
+    (manager) =>
+      new Droppable(
+        {
+          ...toValueDeep(input),
+          register: false,
+          element: unrefElement(input.element) ?? undefined,
+        },
+        manager
+      )
+  );
   const trackedDroppable = useDeepSignal(droppable);
-
-  watch(manager, () => {
-    droppable.value = createDroppable();
-  });
 
   watchEffect(() => {
     droppable.value.element = unrefElement(input.element) ?? undefined;
@@ -53,14 +55,4 @@ export function useDroppable<T extends Data = Data>(
     droppable: shallowReadonly(droppable),
     isDropTarget: computed(() => trackedDroppable.value.isDropTarget),
   };
-
-  function createDroppable() {
-    return new Droppable(
-      {
-        ...toValueDeep(input),
-        element: unrefElement(input.element) ?? undefined,
-      },
-      manager.value
-    );
-  }
 }
