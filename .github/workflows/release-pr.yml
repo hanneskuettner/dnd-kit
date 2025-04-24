@@ -1,11 +1,11 @@
 name: Publish PR
 on:
   pull_request:
+    branches:
+      - experimental
   push:
     branches:
-      - '**'
-    tags:
-      - '!**'
+      - experimental
 
 jobs:
   build:
