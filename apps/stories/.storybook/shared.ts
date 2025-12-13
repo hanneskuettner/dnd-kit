@@ -31,5 +31,12 @@ export async function sharedViteFinal(config: UserConfig): Promise<UserConfig> {
     optimizeDeps: {
       exclude: ['@dnd-kit/*'],
     },
+    server: {
+      // Enable CORS with credentials support for Storybook composition
+      cors: {
+        origin: true, // Reflect the request origin
+        credentials: true,
+      },
+    },
   });
 }

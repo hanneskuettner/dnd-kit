@@ -1,7 +1,7 @@
 import {DragDropManager} from '@dnd-kit/dom';
 import {Sortable} from '@dnd-kit/dom/sortable';
 
-import {createVanillaStory} from '../../shared/utilities';
+import {createVanillaStory} from '../../../shared/utilities';
 
 export const SortableExample = createVanillaStory(() => {
   const manager = new DragDropManager();
