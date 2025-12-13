@@ -1,8 +1,8 @@
 import {getAbsolutePath, getAddons, sharedViteFinal} from './shared';
 
 export default {
-  // Only docs/MDX files in the composition host
-  stories: ['../stories/**/*.stories.mdx'],
+  // Vanilla (DOM) stories and MDX docs in the composition host
+  stories: ['../stories/**/*.stories.@(ts|tsx|mdx)'],
 
   addons: getAddons(),
 

@@ -1,7 +1,7 @@
 import {DragDropManager, Draggable} from '@dnd-kit/dom';
 
-import draggableIconSrc from '@dnd-kit/stories/shared/assets/draggableIcon.svg';
-import {createVanillaStory} from '../../utilities';
+import draggableIconSrc from '../../shared/assets/draggableIcon.svg';
+import {createVanillaStory} from '../../shared/utilities';
 
 export const DraggableExample = createVanillaStory(() => {
   const manager = new DragDropManager();
