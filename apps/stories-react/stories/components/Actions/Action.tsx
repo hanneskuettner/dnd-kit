@@ -1,28 +1,18 @@
-import React, {forwardRef, CSSProperties, Ref} from 'react';
+import React, {forwardRef, CSSProperties} from 'react';
 
-import {classNames} from '../../utilities';
-
-import styles from './Actions.module.css';
-
-export interface Props extends React.HTMLAttributes<HTMLButtonElement> {
+export interface Props extends React.HTMLAttributes<HTMLElement> {
   variant?: 'light' | 'dark' | 'destructive';
   cursor?: CSSProperties['cursor'];
 }
 
-export const Action = forwardRef<HTMLButtonElement, Props>(
-  ({className, cursor, style, variant = 'light', ...props}, ref) => {
-    return (
-      <button
-        ref={ref}
-        {...props}
-        className={classNames(styles.Action, styles[variant], className)}
-        style={
-          {
-            ...style,
-            cursor,
-          } as CSSProperties
-        }
-      />
-    );
+export const Action = forwardRef<HTMLElement, Props>(
+  ({cursor, style, variant = 'light', ...props}, ref) => {
+    return React.createElement('action-component', {
+      ref,
+      'data-variant': variant,
+      cursor,
+      style,
+      ...props,
+    });
   }
 );

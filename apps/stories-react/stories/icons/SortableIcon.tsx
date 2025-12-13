@@ -1,13 +1,12 @@
-import {HTMLProps} from 'react';
+import React, {type HTMLAttributes} from 'react';
 
-import sortableIcon from '@dnd-kit/stories/shared/assets/sortableIcon.svg';
+interface Props extends HTMLAttributes<HTMLElement> {
+  width?: number;
+}
 
-export const SortableIcon = (props: HTMLProps<HTMLImageElement>) => (
-  <img
-    src={sortableIcon}
-    width="90"
-    alt="Sortable"
-    draggable={false}
-    {...props}
-  />
-);
+export const SortableIcon = ({width, ...props}: Props) => {
+  return React.createElement('sortable-icon', {
+    width: width ? String(width) : undefined,
+    ...props,
+  });
+};

@@ -1,9 +1,5 @@
 import React, {forwardRef} from 'react';
 
-import {classNames} from '../../utilities';
-
-import styles from './Container.module.css';
-
 export interface Props {
   children: React.ReactNode;
   actions?: React.ReactNode;
@@ -15,7 +11,7 @@ export interface Props {
   transitionId?: string;
 }
 
-export const Container = forwardRef<HTMLDivElement, Props>(
+export const Container = forwardRef<HTMLElement, Props>(
   (
     {
       actions,
@@ -30,31 +26,24 @@ export const Container = forwardRef<HTMLDivElement, Props>(
     }: Props,
     ref
   ) => {
-    return (
-      <div
-        {...props}
-        ref={ref}
-        style={
-          {
-            ...style,
-            viewTransitionName: transitionId,
-            '--columns': columns,
-          } as React.CSSProperties
-        }
-        className={classNames(
-          styles.Container,
-          scrollable && styles.scrollable,
-          shadow && styles.shadow
-        )}
-      >
-        {label ? (
-          <div className={styles.Header}>
-            {label}
-            {actions}
-          </div>
-        ) : null}
+    return React.createElement(
+      'container-component',
+      {
+        ref,
+        columns: String(columns),
+        label,
+        'data-scrollable': scrollable ? 'true' : undefined,
+        'data-shadow': shadow ? 'true' : undefined,
+        style: {
+          ...style,
+          viewTransitionName: transitionId,
+        },
+        ...props,
+      },
+      <>
+        {actions && <div slot="actions">{actions}</div>}
         <ul id={label}>{children}</ul>
-      </div>
+      </>
     );
   }
 );

@@ -1,4 +1,13 @@
-import {Button, Dropzone, Item} from '../shared/components';
+import {
+  Action,
+  Button,
+  Container,
+  Dropzone,
+  Handle,
+  DraggableIcon,
+  SortableIcon,
+  Item,
+} from '../shared/components';
 
 /**
  * Register shared web components.
@@ -9,11 +18,26 @@ export function registerWebComponents(): void {
     return;
   }
 
+  if (!customElements.get('action-component')) {
+    customElements.define('action-component', Action);
+  }
   if (!customElements.get('button-component')) {
     customElements.define('button-component', Button);
   }
+  if (!customElements.get('container-component')) {
+    customElements.define('container-component', Container);
+  }
   if (!customElements.get('dropzone-component')) {
     customElements.define('dropzone-component', Dropzone);
+  }
+  if (!customElements.get('handle-component')) {
+    customElements.define('handle-component', Handle);
+  }
+  if (!customElements.get('draggable-icon')) {
+    customElements.define('draggable-icon', DraggableIcon);
+  }
+  if (!customElements.get('sortable-icon')) {
+    customElements.define('sortable-icon', SortableIcon);
   }
   if (!customElements.get('item-component')) {
     customElements.define('item-component', Item);
