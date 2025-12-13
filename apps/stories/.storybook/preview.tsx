@@ -30,14 +30,7 @@ const preview = {
       );
     },
   ],
-  parameters: {
-    ...sharedParameters,
-    options: {
-      storySort: {
-        order: ['Docs'],
-      },
-    },
-  },
+  parameters: sharedParameters,
 };
 
 export default preview;

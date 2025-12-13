@@ -20,6 +20,31 @@ export function registerWebComponents(): void {
   }
 }
 
+// Track if we've already set up the dark mode listener
+let darkModeListenerInitialized = false;
+
+/**
+ * Initialize the dark mode message listener.
+ * This should be called as early as possible (at module load time).
+ */
+export function initDarkModeListener(): void {
+  if (typeof window === 'undefined' || darkModeListenerInitialized) {
+    return;
+  }
+  darkModeListenerInitialized = true;
+
+  // Listen for dark mode changes from composition host
+  window.addEventListener('message', (event) => {
+    if (event.data?.type === 'storybook-dark-mode') {
+      if (event.data.isDark) {
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+      }
+    }
+  });
+}
+
 /**
  * Setup dark mode based on URL parameters.
  * Call this on mount in your preview decorator.

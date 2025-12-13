@@ -6,15 +6,15 @@ import {Unstyled} from '@storybook/addon-docs/blocks';
 import {
   registerWebComponents,
   setupDarkMode,
+  initDarkModeListener,
   sharedParameters,
 } from '@dnd-kit/stories/.storybook/preview-shared';
 import {Code} from '../stories/components/docs';
 
-// Import shared global styles
 import '@dnd-kit/stories/shared/styles/global.css';
 
-// Register web components
 registerWebComponents();
+initDarkModeListener();
 
 function DarkModeProvider({children}: PropsWithChildren) {
   useEffect(() => {
